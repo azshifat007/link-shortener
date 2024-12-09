@@ -26,11 +26,11 @@ Python 3.x installed on your system.
 Flask library installed. You can install Flask by running:
 
 pip install flask
+
 Steps
-Clone this repository:
 
+Clone this repository: git clone https://github.com/azshifat007/link-shortener.git
 
-git clone https://github.com/azshifat007/link-shortener.git
 cd link-shortener
 Initialize the database:
 
