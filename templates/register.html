@@ -1,22 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Register</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            padding: 40px;
+        }
+        .container {
+            display: flex;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 1000px;
+        }
+        .form-container {
+            width: 50%;
+            padding: 30px;
+            background-color: #f3f3f3;
+        }
+        .form-container h2 {
+            margin-bottom: 20px;
+        }
+        .form-container label {
+            font-weight: bold;
+        }
+        .form-container input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .form-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .form-container button:hover {
+            background-color: #0056b3;
+        }
+        .benefits-container {
+            width: 50%;
+            background-color: #f0f8ff;
+            padding: 30px;
+        }
+        .benefits-container h3 {
+            margin-bottom: 20px;
+        }
+        .benefits-container ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+        .benefits-container ul li {
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h1>Register</h1>
-        <form method="POST" action="{{ url_for('register') }}">
-            <div class="mb-3">
-                <label for="username">Username</label>
-                <input type="text" class="form-control" id="username" name="username" required>
-            </div>
-            <div class="mb-3">
+    <div class="container">
+        <!-- Registration Form -->
+        <div class="form-container">
+            <h2>Create Account</h2>
+            <form action="/register" method="POST">
+                <label for="username">Name</label>
+                <input type="text" id="username" name="username" required>
+
+                <label for="email">E-Mail Address</label>
+                <input type="email" id="email" name="email" required>
+
                 <label for="password">Password</label>
-                <input type="password" class="form-control" id="password" name="password" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Register</button>
-        </form>
+                <input type="password" id="password" name="password" required>
+
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" required>
+
+                <button type="submit">Sign Up</button>
+            </form>
+            <p>By signing up, you agree to Link-Shortener <a href="#">terms of service</a> and <a href="#">privacy policy</a>.</p>
+            <p>Every account begins with a 5-day free trial, after which a paid plan is required.</p>
+        </div>
+
+        <!-- Benefits Section -->
+        <div class="benefits-container">
+            <h3>Link-Shortener is the best link management service to track, brand, and share short URLs</h3>
+            <ul>
+                <li>Track your Short Links with Detailed Analytics</li>
+                <li>Customizable and Trackable QR Codes</li>
+                <li>Create Custom Short Links</li>
+                <li>Bulk CSV Import URLs</li>
+                <li>Update URLs whenever you need to change their Destination</li>
+                <li>Custom Domains with SSL</li>
+                <li>Team Management</li>
+                <li>Smart URLs</li>
+                <li>Zapier Integration</li>
+                <li>Link Retargeting</li>
+                <li>API Access</li>
+            </ul>
+        </div>
     </div>
 </body>
 </html>
