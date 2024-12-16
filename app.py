@@ -1,130 +1,99 @@
-from flask import Flask, request, redirect, render_template, url_for, flash, session
-import sqlite3
-import string
-import random
-import datetime
-from functools import wraps
+from flask import Flask, render_template, redirect, url_for, flash, request
+from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-# Database setup
-def init_db():
-    with sqlite3.connect('database.db') as conn:
-        conn.execute('''
-            CREATE TABLE IF NOT EXISTS urls (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                original_url TEXT NOT NULL,
-                short_code TEXT UNIQUE NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                click_count INTEGER DEFAULT 0
-            )
-        ''')
-        conn.execute('''
-            CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT UNIQUE NOT NULL,
-                password TEXT NOT NULL
-            )
-        ''')
-        print("Database initialized!")
+# Initialize Flask-Login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 
-def generate_short_code():
-    return ''.join(random.choices(string.ascii_letters + string.digits, k=6))
+# Simulate a simple user database
+users = {}
 
-# Authentication decorator
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'user_id' not in session:
-            flash("You need to log in first!", "error")
-            return redirect(url_for('login'))
-        return f(*args, **kwargs)
-    return decorated_function
+class User(UserMixin):
+    def __init__(self, id, username, password):
+        self.id = id
+        self.username = username
+        self.password = password
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    if request.method == 'POST':
-        original_url = request.form['url']
-        if not original_url:
-            flash("URL is required!", "error")
-            return redirect(url_for('index'))
+@login_manager.user_loader
+def load_user(user_id):
+    """Load user by ID for Flask-Login."""
+    return users.get(int(user_id))
 
-        short_code = generate_short_code()
-        with sqlite3.connect('database.db') as conn:
-            cursor = conn.cursor()
-            try:
-                cursor.execute('INSERT INTO urls (original_url, short_code) VALUES (?, ?)', (original_url, short_code))
-                conn.commit()
-                flash(f"Shortened URL created: {request.host_url}{short_code}", "success")
-            except sqlite3.IntegrityError:
-                flash("Error creating short URL.", "error")
-
+@app.route('/')
+def home():
+    """Home page."""
     return render_template('index.html')
 
-@app.route('/<short_code>')
-def redirect_to_url(short_code):
-    with sqlite3.connect('database.db') as conn:
-        cursor = conn.cursor()
-        cursor.execute('SELECT original_url, click_count FROM urls WHERE short_code = ?', (short_code,))
-        result = cursor.fetchone()
-        if result:
-            original_url, click_count = result
-            cursor.execute('UPDATE urls SET click_count = ? WHERE short_code = ?', (click_count + 1, short_code))
-            conn.commit()
-            return redirect(original_url)
-        else:
-            flash("Short URL not found!", "error")
-            return redirect(url_for('index'))
+@app.route('/about')
+def about():
+    """About page."""
+    return render_template('about.html')
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        with sqlite3.connect('database.db') as conn:
-            cursor = conn.cursor()
-            cursor.execute('SELECT id FROM users WHERE username = ? AND password = ?', (username, password))
-            user = cursor.fetchone()
-            if user:
-                session['user_id'] = user[0]
-                flash("Logged in successfully!", "success")
-                return redirect(url_for('dashboard'))
-            else:
-                flash("Invalid credentials!", "error")
-    return render_template('login.html')
+@app.route('/privacy')
+def privacy():
+    """Privacy policy page."""
+    return render_template('privacy.html')
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        with sqlite3.connect('database.db') as conn:
-            cursor = conn.cursor()
-            try:
-                cursor.execute('INSERT INTO users (username, password) VALUES (?, ?)', (username, password))
-                conn.commit()
-                flash("Account created successfully!", "success")
-                return redirect(url_for('login'))
-            except sqlite3.IntegrityError:
-                flash("Username already taken!", "error")
-    return render_template('register.html')
+@app.route('/pricing')
+def pricing():
+    """Pricing page."""
+    return render_template('pricing.html')
 
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    with sqlite3.connect('database.db') as conn:
-        cursor = conn.cursor()
-        cursor.execute('SELECT original_url, short_code, click_count FROM urls')
-        urls = cursor.fetchall()
-    return render_template('dashboard.html', urls=urls)
+    """Dashboard page, accessible only when logged in."""
+    return render_template('dashboard.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    """Login route."""
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = next((u for u in users.values() if u.username == username), None)
+        
+        if user and check_password_hash(user.password, password):
+            login_user(user)
+            flash('Logged in successfully!', 'success')
+            return redirect(url_for('dashboard'))
+        else:
+            flash('Invalid credentials. Please try again.', 'danger')
+
+    return render_template('login.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    """Register route."""
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        if any(u.username == username for u in users.values()):
+            flash('Username already exists. Please log in.', 'warning')
+            return redirect(url_for('login'))
+
+        new_id = len(users) + 1
+        user = User(id=new_id, username=username, password=generate_password_hash(password))
+        users[new_id] = user
+
+        flash('Registration successful. Please log in.', 'success')
+        return redirect(url_for('login'))
+
+    return render_template('register.html')
 
 @app.route('/logout')
+@login_required
 def logout():
-    session.pop('user_id', None)
-    flash("Logged out successfully!", "success")
-    return redirect(url_for('index'))
+    """Logout route."""
+    logout_user()
+    flash('You have been logged out.', 'info')
+    return redirect(url_for('home'))
 
 if __name__ == '__main__':
-    init_db()
     app.run(debug=True)
