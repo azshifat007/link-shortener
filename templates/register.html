@@ -4,14 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Account</title>
-    <link rel="stylesheet" href="styles.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f9f9f9;
+            margin: 0;
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
-            padding: 40px;
+            flex-direction: column;
         }
         .container {
             display: flex;
@@ -70,7 +72,10 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Include Navbar -->
+    {% include 'navbar.html' %}
+
+    <div class="container mt-5">
         <!-- Registration Form -->
         <div class="form-container">
             <h2>Create Account</h2>
@@ -89,7 +94,7 @@
 
                 <button type="submit">Sign Up</button>
             </form>
-            <p>By signing up, you agree to Link-Shortener <a href="#">terms of service</a> and <a href="#">privacy policy</a>.</p>
+            <p>By signing up, you agree to Link-Shortener <a href="{{url_for('terms')}}">terms of service</a> and <a href="{{url_for('privacy')}}">privacy policy</a>.</p>
             <p>Every account begins with a 5-day free trial, after which a paid plan is required.</p>
         </div>
 
@@ -111,5 +116,8 @@
             </ul>
         </div>
     </div>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

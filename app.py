@@ -29,15 +29,19 @@ def home():
     """Home page."""
     return render_template('index.html')
 
+@app.route('/terms')
+def terms():
+    return render_template('terms_and_conditions.html')
+
+@app.route('/privacy')
+def privacy():
+    return render_template('privacy _policy.html')
+
 @app.route('/about')
 def about():
     """About page."""
     return render_template('about.html')
 
-@app.route('/privacy')
-def privacy():
-    """Privacy policy page."""
-    return render_template('privacy.html')
 
 @app.route('/pricing')
 def pricing():
