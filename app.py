@@ -99,5 +99,10 @@ def logout():
     flash('You have been logged out.', 'info')
     return redirect(url_for('home'))
 
+@app.route('/shorten', methods=['POST'])
+def shorten_url():
+    long_url = request.form.get('long_url')
+    return f"URL Shortened for: {long_url}"
+
 if __name__ == '__main__':
     app.run(debug=True)
