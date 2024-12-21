@@ -31,17 +31,18 @@ def home():
 
 @app.route('/terms')
 def terms():
+    """Terms and Conditions page."""
     return render_template('terms_and_conditions.html')
 
 @app.route('/privacy')
 def privacy():
-    return render_template('privacy _policy.html')
+    """Privacy Policy page."""
+    return render_template('privacy_policy.html')
 
 @app.route('/about')
 def about():
     """About page."""
     return render_template('about.html')
-
 
 @app.route('/pricing')
 def pricing():
@@ -99,10 +100,25 @@ def logout():
     flash('You have been logged out.', 'info')
     return redirect(url_for('home'))
 
-@app.route('/shorten', methods=['POST'])
+@app.route('/shorten', methods=['GET', 'POST'])
 def shorten_url():
-    long_url = request.form.get('long_url')
-    return f"URL Shortened for: {long_url}"
+    """URL Shortener."""
+    short_url = None
+    long_url = None
+
+    if request.method == 'POST':
+        long_url = request.form.get('long_url')
+        if long_url:
+            short_id = str(hash(long_url))[:6]  # Simple hash for demo purposes
+            short_url = f"short.ly/{short_id}"
+
+    return render_template('shorten.html', short_url=short_url, long_url=long_url)
+
+@app.route('/short.ly/<short_id>')
+def redirect_to_long_url(short_id):
+    """Redirect from short URL to long URL."""
+    flash('This is a placeholder. Implement URL mapping logic here.', 'info')
+    return redirect(url_for('home'))  # Replace with the actual redirection logic
 
 if __name__ == '__main__':
     app.run(debug=True)
