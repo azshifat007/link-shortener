@@ -1,3 +1,4 @@
+
 from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -23,6 +24,9 @@ class User(UserMixin):
 def load_user(user_id):
     """Load user by ID for Flask-Login."""
     return users.get(int(user_id))
+
+# Dictionary to store short URLs and their corresponding long URLs
+url_mapping = {}
 
 @app.route('/')
 def home():
@@ -109,7 +113,11 @@ def shorten_url():
     if request.method == 'POST':
         long_url = request.form.get('long_url')
         if long_url:
-            short_id = str(hash(long_url))[:6]  # Simple hash for demo purposes
+            # Generate a unique short ID (for demonstration purposes)
+            import uuid
+            short_id = str(uuid.uuid4()).replace('-', '')
+            url_mapping[short_id] = long_url  # Store the mapping
+
             short_url = f"short.ly/{short_id}"
 
     return render_template('shorten.html', short_url=short_url, long_url=long_url)
@@ -117,8 +125,13 @@ def shorten_url():
 @app.route('/short.ly/<short_id>')
 def redirect_to_long_url(short_id):
     """Redirect from short URL to long URL."""
-    flash('This is a placeholder. Implement URL mapping logic here.', 'info')
-    return redirect(url_for('home'))  # Replace with the actual redirection logic
+    if short_id in url_mapping:
+        original_long_url = url_mapping[short_id]
+        flash(f'Redirecting to {original_long_url}', 'info')
+        return redirect(original_long_url)
+    else:
+        flash('Invalid short ID.', 'error')
+        return redirect(url_for('home'))
 
 if __name__ == '__main__':
     app.run(debug=True)
