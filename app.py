@@ -31,7 +31,7 @@ url_mapping = {}
 @app.route('/')
 def home():
     """Home page."""
-    return render_template('index.html')
+    return render_template('index.html', title='Home', is_home=True)
 
 @app.route('/terms')
 def terms():
@@ -51,7 +51,7 @@ def about():
 @app.route('/pricing')
 def pricing():
     """Pricing page."""
-    return render_template('pricing.html')
+    return render_template('pricing.html', title='Pricing', is_home=False)
 
 @app.route('/dashboard')
 @login_required
