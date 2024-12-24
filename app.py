@@ -119,7 +119,7 @@ def shorten_url():
         if long_url:
             # Generate a unique short ID (for demonstration purposes)
             import uuid
-            short_id = str(uuid.uuid4()).replace('-', '')
+            short_id = str(uuid.uuid4()).replace('-', '')[:5]
             url_mapping[short_id] = long_url  # Store the mapping
 
             short_url = f"short.ly/{short_id}"
