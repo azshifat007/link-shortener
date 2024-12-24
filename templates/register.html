@@ -8,66 +8,80 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            background-color: #f8f9fa;
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
         }
-        .container {
-            display: flex;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            width: 100%;
-            max-width: 1000px;
-        }
-        .form-container {
-            width: 50%;
+
+        .form-container, .benefits-container {
+            background-color: rgba(255, 255, 255, 0.9);
             padding: 30px;
-            background-color: #f3f3f3;
-        }
-        .form-container h2 {
-            margin-bottom: 20px;
-        }
-        .form-container label {
-            font-weight: bold;
-        }
-        .form-container input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 5px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             border: 1px solid #ccc;
         }
-        .form-container button {
-            width: 100%;
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .form-container button:hover {
-            background-color: #0056b3;
-        }
-        .benefits-container {
-            width: 50%;
-            background-color: #f0f8ff;
-            padding: 30px;
-        }
-        .benefits-container h3 {
+
+        .form-container h2, .benefits-container h3 {
+            text-align: center;
             margin-bottom: 20px;
         }
-        .benefits-container ul {
-            list-style-type: none;
-            padding-left: 20px;
+
+        .form-container input, .form-container button {
+            display: block;
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
+
+        .form-container button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .form-container button:hover {
+            background-color: #45a049;
+        }
+
+        .benefits-container ul {
+            list-style: none;
+            padding: 0;
+        }
+
         .benefits-container ul li {
             margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .benefits-container ul li::before {
+            content: "✔";
+            margin-right: 10px;
+            color: #4CAF50;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 575.98px) { /* Small devices */
+            .form-container, .benefits-container {
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (min-width: 576px) and (max-width: 767.98px) { /* Medium devices */
+            .form-container, .benefits-container {
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (min-width: 768px) { /* Large devices */
+            .form-container, .benefits-container {
+                margin-top: 20px;
+            }
         }
     </style>
 </head>
@@ -76,48 +90,57 @@
     {% include 'navbar.html' %}
 
     <div class="container mt-5">
-        <!-- Registration Form -->
-        <div class="form-container">
-            <h2>Create Account</h2>
-            <form action="/register" method="POST">
-                <label for="username">Name</label>
-                <input type="text" id="username" name="username" required>
+        <h2 style="text-align:center;">Create Account</h2>
+        <div class="row g-4">
+            <!-- Registration Form Column -->
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="form-container">
+                    <form action="/register" method="POST">
+                        <label for="username">Name</label>
+                        <input type="text" id="username" name="username" required>
 
-                <label for="email">E-Mail Address</label>
-                <input type="email" id="email" name="email" required>
+                        <label for="email">E-Mail Address</label>
+                        <input type="email" id="email" name="email" required>
 
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
 
-                <label for="confirm_password">Confirm Password</label>
-                <input type="password" id="confirm_password" name="confirm_password" required>
+                        <label for="confirm_password">Confirm Password</label>
+                        <input type="password" id="confirm_password" name="confirm_password" required>
 
-                <button type="submit">Sign Up</button>
-            </form>
-            <p>By signing up, you agree to Link-Shortener <a href="{{url_for('terms')}}">terms of service</a> and <a href="{{url_for('privacy')}}">privacy policy</a>.</p>
-            <p>Every account begins with a 5-day free trial, after which a paid plan is required.</p>
-        </div>
+                        <button type="submit">Sign Up</button>
+                    </form>
+                    <p class="mt-3">By signing up, you agree to Link-Shortener 
+                        <a href="{{url_for('terms')}}">terms of service</a> and 
+                        <a href="{{url_for('privacy')}}">privacy policy</a>.
+                    </p>
+                    <p>Every account begins with a 5-day free trial, after which a paid plan is required.</p>
+                </div>
+            </div>
 
-        <!-- Benefits Section -->
-        <div class="benefits-container">
-            <h3>Link-Shortener is the best link management service to track, brand, and share short URLs</h3>
-            <ul>
-                <li>Track your Short Links with Detailed Analytics</li>
-                <li>Customizable and Trackable QR Codes</li>
-                <li>Create Custom Short Links</li>
-                <li>Bulk CSV Import URLs</li>
-                <li>Update URLs whenever you need to change their Destination</li>
-                <li>Custom Domains with SSL</li>
-                <li>Team Management</li>
-                <li>Smart URLs</li>
-                <li>Zapier Integration</li>
-                <li>Link Retargeting</li>
-                <li>API Access</li>
-            </ul>
+            <!-- Benefits Section Column -->
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="benefits-container">
+                    <h3>Why Choose Link-Shortener?</h3>
+                    <ul>
+                        <li>Track your Short Links with Detailed Analytics</li>
+                        <li>Customizable and Trackable QR Codes</li>
+                        <li>Create Custom Short Links</li>
+                        <li>Bulk CSV Import URLs</li>
+                        <li>Update URLs whenever you need to change their Destination</li>
+                        <li>Custom Domains with SSL</li>
+                        <li>Team Management</li>
+                        <li>Smart URLs</li>
+                        <li>Zapier Integration</li>
+                        <li>Link Retargeting</li>
+                        <li>API Access</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
     <!-- Footer -->
-    {%include "footer.html" %}
+    {% include "footer.html" %}
 
     <!-- Bootstrap Bundle JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
