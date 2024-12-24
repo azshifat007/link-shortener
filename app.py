@@ -63,18 +63,22 @@ def dashboard():
 def login():
     """Login route."""
     if request.method == 'POST':
-        username = request.form['username']
+        email = request.form['email']  # Use email instead of username
         password = request.form['password']
-        user = next((u for u in users.values() if u.username == username), None)
+        remember = 'remember' in request.form  # Check if 'remember me' is selected
+
+        user = next((u for u in users.values() if u.email == email), None)  # Check email instead of username
         
         if user and check_password_hash(user.password, password):
-            login_user(user)
+            login_user(user, remember=remember)  # Pass 'remember' to login_user
             flash('Logged in successfully!', 'success')
             return redirect(url_for('dashboard'))
         else:
-            flash('Invalid credentials. Please try again.', 'danger')
+            flash('Invalid email or password. Please try again.', 'danger')
 
     return render_template('login.html')
+
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
