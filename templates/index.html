@@ -2,13 +2,92 @@
 
 {% block content %}
 <div class="container text-center mt-5">
-    <h1 class="display-4">Shorten Your URLs with Ease</h1>
-    <p class="lead">Create short, shareable links in seconds.</p>
-    <form method="POST" action="{{ url_for('shorten_url') }}" class="mt-4">
-        <div class="input-group input-group-lg">
-            <input type="url" name="long_url" class="form-control" placeholder="Enter your long URL" required>
-            <button type="submit" class="btn btn-primary">Shorten</button>
-        </div>
-    </form>
+    
+    
+    {% include 'heroSection.html' %}
+
+<!-- Additional Content (if needed) -->
+<div class="container mt-5">
+    <h2 class="text-center">Why Choose Us?</h2>
+    <p class="text-center">We provide the best URL shortening experience with advanced analytics and QR code generation.</p>
 </div>
+</div>
+
+<!-- Pricing Section -->
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Our Pricing Plans</h1>
+    <p class="text-center mb-5">Choose the plan that best suits your needs and start shortening your links today!</p>
+    
+    <!-- Pricing Cards -->
+    <div class="row justify-content-center">
+        <!-- Regular Plan -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100 shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3>Regular</h3>
+                </div>
+                <div class="card-body">
+                    <h2 class="card-title">$10/month</h2>
+                    <p class="card-text">Perfect for individuals looking to manage and track short links easily.</p>
+                    <ul class="list-unstyled">
+                        <li>✓ Unlimited Short Links</li>
+                        <li>✓ Customizable URLs</li>
+                        <li>✓ Basic Analytics</li>
+                        <li>✓ Email Support</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <a href="{{ url_for('register') }}" class="btn btn-primary">Get Started</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teacher Plan -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100 shadow">
+                <div class="card-header bg-success text-white">
+                    <h3>Teacher</h3>
+                </div>
+                <div class="card-body">
+                    <h2 class="card-title">$7/month</h2>
+                    <p class="card-text">Tailored for educators to share resources efficiently.</p>
+                    <ul class="list-unstyled">
+                        <li>✓ Unlimited Short Links</li>
+                        <li>✓ Trackable QR Codes</li>
+                        <li>✓ Advanced Analytics</li>
+                        <li>✓ Priority Support</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <a href="{{ url_for('register') }}" class="btn btn-success">Get Started</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Plan -->
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100 shadow">
+                <div class="card-header bg-info text-white">
+                    <h3>Student</h3>
+                </div>
+                <div class="card-body">
+                    <h2 class="card-title">$5/month</h2>
+                    <p class="card-text">Affordable plan for students to simplify link management.</p>
+                    <ul class="list-unstyled">
+                        <li>✓ Unlimited Short Links</li>
+                        <li>✓ Customizable URLs</li>
+                        <li>✓ Basic Analytics</li>
+                        <li>✓ Student Discount</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <a href="{{ url_for('register') }}" class="btn btn-info">Get Started</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 {% endblock %}
