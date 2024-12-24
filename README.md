@@ -58,10 +58,18 @@ This application is a simple yet powerful URL shortening service built with Flas
 ## Folder Structure
 ```
 link-shortener/
-├── app.py             # Main application
+├── app.py             # Main application file
 ├── templates/         # HTML templates
+│   ├── base.html      # Base template
+│   ├── index.html     # Home page
+│   ├── login.html     # Login page
+│   ├── register.html  # Registration page
+│   ├── dashboard.html # User dashboard
+│   ├── shorten.html   # URL shortening page
+│   └── ...            # Other pages
 ├── static/            # Static files (CSS, JS, etc.)
-├── database.db        # SQLite database
+│   └── styles.css     # Custom CSS
+├── requirements.txt   # Python dependencies
 ├── README.md          # Documentation
 └── LICENSE            # License file
 ```
