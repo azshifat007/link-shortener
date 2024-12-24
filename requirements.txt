@@ -1,19 +1,7 @@
-Technologies Used
-Flask: Backend framework for handling routes and business logic.
-
-Flask-Login: User authentication and session management.
-
-Bootstrap 5: Frontend framework for responsive and modern UI design.
-
-qrcode: Python library for generating QR codes.
-
-Werkzeug: Password hashing and security.
-
-
-Python 3.7 or higher
-
-Flask
-
-Flask-Login
-
-qrcode
+Flask==2.3.2
+Flask-Login==0.6.2
+Flask-SQLAlchemy==3.0.5
+Werkzeug==2.3.6
+qrcode==7.4.2
+python-dotenv==1.0.0
+Pillow==9.5.0

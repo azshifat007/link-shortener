@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_sqlalchemy import SQLAlchemy
 import uuid
 import qrcode
 from io import BytesIO
@@ -9,32 +10,40 @@ import base64
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Replace with a secure secret key
 
+# Configure SQLite database
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///link_shortener.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
 # Initialize Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-# Simulate a simple user database
-users = {}
+# User model for Flask-Login
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(200), nullable=False)
 
-# Dictionary to store short URLs and their corresponding long URLs
-url_mapping = {}
+# Shortened URL model
+class ShortenedURL(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    short_id = db.Column(db.String(10), unique=True, nullable=False)
+    long_url = db.Column(db.String(500), nullable=False)
+    clicks = db.Column(db.Integer, default=0)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('shortened_urls', lazy=True))
 
-# Dictionary to store user-specific URLs
-user_urls = {}
-
-# User class for Flask-Login
-class User(UserMixin):
-    def __init__(self, id, username, password, email):
-        self.id = id
-        self.username = username
-        self.password = password
-        self.email = email  # Add email attribute
+# Create database tables
+with app.app_context():
+    db.create_all()
 
 @login_manager.user_loader
 def load_user(user_id):
     """Load user by ID for Flask-Login."""
-    return users.get(int(user_id))
+    return User.query.get(int(user_id))
 
 # Routes
 @app.route('/')
@@ -66,8 +75,7 @@ def pricing():
 @login_required
 def dashboard():
     """Dashboard page, accessible only when logged in."""
-    user_id = current_user.id
-    urls = user_urls.get(user_id, [])  # Get the user's shortened URLs
+    urls = ShortenedURL.query.filter_by(user_id=current_user.id).all()
     return render_template('dashboard.html', urls=urls)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -78,7 +86,7 @@ def login():
         password = request.form['password']
         remember = 'remember' in request.form  # Check if 'remember me' is selected
 
-        user = next((u for u in users.values() if u.email == email), None)  # Check email instead of username
+        user = User.query.filter_by(email=email).first()  # Query the database for the user
         
         if user and check_password_hash(user.password, password):
             login_user(user, remember=remember)  # Pass 'remember' to login_user
@@ -97,13 +105,16 @@ def register():
         password = request.form['password']
         email = request.form['email']  # Add email field
 
-        if any(u.username == username for u in users.values()):
-            flash('Username already exists. Please log in.', 'warning')
+        # Check if the username or email already exists
+        existing_user = User.query.filter((User.username == username) | (User.email == email)).first()
+        if existing_user:
+            flash('Username or email already exists. Please log in.', 'warning')
             return redirect(url_for('login'))
 
-        new_id = len(users) + 1
-        user = User(id=new_id, username=username, password=generate_password_hash(password), email=email)  # Pass email to User
-        users[new_id] = user
+        # Create a new user
+        new_user = User(username=username, email=email, password=generate_password_hash(password))
+        db.session.add(new_user)
+        db.session.commit()
 
         flash('Registration successful. Please log in.', 'success')
         return redirect(url_for('login'))
@@ -128,20 +139,13 @@ def shorten_url():
     if request.method == 'POST':
         long_url = request.form.get('long_url')
         if long_url:
-            # Generate a unique short ID (for demonstration purposes)
             short_id = str(uuid.uuid4()).replace('-', '')[:5]
-            url_mapping[short_id] = long_url  # Store the mapping
 
-            # Store user-specific data
+            # Save the shortened URL to the database
             if current_user.is_authenticated:
-                user_id = current_user.id
-                if user_id not in user_urls:
-                    user_urls[user_id] = []
-                user_urls[user_id].append({
-                    'short_id': short_id,
-                    'long_url': long_url,
-                    'clicks': 0  # Initialize click count
-                })
+                new_url = ShortenedURL(short_id=short_id, long_url=long_url, user_id=current_user.id)
+                db.session.add(new_url)
+                db.session.commit()
 
             short_url = f"short.ly/{short_id}"
 
@@ -167,18 +171,12 @@ def shorten_url():
 @app.route('/short.ly/<short_id>')
 def redirect_to_long_url(short_id):
     """Redirect from short URL to long URL."""
-    if short_id in url_mapping:
-        original_long_url = url_mapping[short_id]
-
-        # Increment click count for the user's URL
-        for user_id, urls in user_urls.items():
-            for url in urls:
-                if url['short_id'] == short_id:
-                    url['clicks'] += 1
-                    break
-
-        flash(f'Redirecting to {original_long_url}', 'info')
-        return redirect(original_long_url)
+    url = ShortenedURL.query.filter_by(short_id=short_id).first()
+    if url:
+        url.clicks += 1
+        db.session.commit()
+        flash(f'Redirecting to {url.long_url}', 'info')
+        return redirect(url.long_url)
     else:
         flash('Invalid short ID.', 'error')
         return redirect(url_for('home'))
