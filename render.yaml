@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: link-shortener
+    runtime: python
+    buildCommand: |
+      python -m venv /opt/venv
+      . /opt/venv/bin/activate
+      pip install --upgrade pip
+      pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: FLASK_ENV
+        value: production
