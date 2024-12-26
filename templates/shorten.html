@@ -16,7 +16,7 @@
             </form>
             {% if short_url %}
             <div class="mt-4 p-4 border rounded shadow-sm bg-light">
-                <p class="mb-1">Your shortened URL:</p>
+                <p class="mb-1"><strong>Your shortened URL:</strong></p>
                 <h5>
                     <a href="{{ url_for('redirect_to_long_url', short_id=short_url.split('/')[-1]) }}" target="_blank">
                         {{ request.url_root }}{{ short_url }}
@@ -24,9 +24,9 @@
                 </h5>
                 <p class="mb-0">Original URL: {{ long_url }}</p>
                 {% if qr_code_img %}
-                <div class="mt-3">
+                <div class="mt-3 text-center">
                     <p>Scan the QR code to access the shortened URL:</p>
-                    <img src="data:image/png;base64,{{ qr_code_img }}" alt="QR Code" class="img-fluid">
+                    <img src="data:image/png;base64,{{ qr_code_img }}" alt="QR Code" class="img-fluid shadow-sm rounded" style="max-width: 150px;">
                 </div>
                 {% endif %}
             </div>
