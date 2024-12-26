@@ -1,3 +1,5 @@
+markdown
+Copy
 # 🔗 Link Shortener Application
 
 Welcome to the **Link Shortener Application**, a powerful and user-friendly URL shortening service built with **Flask**. This application allows users to shorten URLs, track clicks, and manage their links through a sleek and responsive dashboard. Whether you're sharing links for personal or professional use, this tool has you covered!
