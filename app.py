@@ -8,7 +8,6 @@ import uuid
 import qrcode
 from io import BytesIO
 import base64
-import requests
 import logging
 
 # Initialize Flask app
