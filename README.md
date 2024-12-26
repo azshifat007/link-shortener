@@ -36,20 +36,20 @@ Welcome to the **Link Shortener Application**, a powerful and user-friendly URL 
    cd link-shortener
 Install dependencies:
 
-```bash
-
+bash
+Copy
 pip install -r requirements.txt
 Initialize the database:
 
-```bash
-
+bash
+Copy
 flask db init
 flask db migrate -m "Initial migration"
 flask db upgrade
 Run the application:
 
-```bash
-
+bash
+Copy
 flask run
 Access the app:
 Open your browser and navigate to http://127.0.0.1:5000.
@@ -70,8 +70,8 @@ Check click statistics and QR codes.
 Premium Features: Upgrade to unlock advanced tools like custom domains and detailed analytics.
 
 📂 Folder Structure
-
-```bash
+bash
+Copy
 link-shortener/
 ├── app.py             # Main application file
 ├── migrations/        # Database migration scripts
@@ -88,7 +88,6 @@ link-shortener/
 ├── requirements.txt   # Python dependencies
 ├── README.md          # Documentation
 └── LICENSE            # License file
-
 🤝 Contributing
 We welcome contributions! Here’s how you can help:
 
@@ -96,18 +95,18 @@ Fork the repository.
 
 Create a new branch for your feature:
 
-```bash
-
+bash
+Copy
 git checkout -b feature-name
 Commit your changes:
 
-```bash
-
+bash
+Copy
 git commit -m "Add feature-name"
 Push to the branch:
 
-```bash
-
+bash
+Copy
 git push origin feature-name
 Create a pull request.
 
