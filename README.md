@@ -1,5 +1,3 @@
-markdown
-Copy
 # 🔗 Link Shortener Application
 
 Welcome to the **Link Shortener Application**, a powerful and user-friendly URL shortening service built with **Flask**. This application allows users to shorten URLs, track clicks, and manage their links through a sleek and responsive dashboard. Whether you're sharing links for personal or professional use, this tool has you covered!
@@ -33,37 +31,40 @@ Welcome to the **Link Shortener Application**, a powerful and user-friendly URL 
 ### Installation
 
 1. **Clone the repository**:
-   ```bash
+   ```bash 
    git clone https://github.com/your-repo/link-shortener.git
    cd link-shortener
-Install dependencies:
+   
+## Install dependencies:
 
-bash
-Copy
-pip install -r requirements.txt
-Initialize the database:
+```bash 
+  
+   pip install -r requirements.txt
+```
+## Initialize the database:
 
-bash
-Copy
+```bash
+
 flask db init
 flask db migrate -m "Initial migration"
 flask db upgrade
+```
 Run the application:
 
-bash
-Copy
+```bash
+
 flask run
 Access the app:
 Open your browser and navigate to http://127.0.0.1:5000.
-
-🚀 Usage
+```
+## 🚀 Usage
 Register: Create an account by visiting the registration page.
 
 Login: Log in to your account to access the dashboard.
 
 Shorten URLs: Submit a URL to generate a shortened version.
 
-Dashboard:
+## Dashboard:
 
 View your shortened URLs.
 
@@ -72,8 +73,8 @@ Check click statistics and QR codes.
 Premium Features: Upgrade to unlock advanced tools like custom domains and detailed analytics.
 
 📂 Folder Structure
-bash
-Copy
+```bash
+
 link-shortener/
 ├── app.py             # Main application file
 ├── migrations/        # Database migration scripts
@@ -90,6 +91,8 @@ link-shortener/
 ├── requirements.txt   # Python dependencies
 ├── README.md          # Documentation
 └── LICENSE            # License file
+
+```
 🤝 Contributing
 We welcome contributions! Here’s how you can help:
 
@@ -97,21 +100,21 @@ Fork the repository.
 
 Create a new branch for your feature:
 
-bash
-Copy
+```bash
+
 git checkout -b feature-name
 Commit your changes:
+```
+```bash
 
-bash
-Copy
 git commit -m "Add feature-name"
 Push to the branch:
+```
+```bash
 
-bash
-Copy
 git push origin feature-name
 Create a pull request.
-
+```
 📜 License
 This project is licensed under the MIT License. See the LICENSE file for details.
 
@@ -122,7 +125,7 @@ Email: support@link-shortener.com
 
 GitHub Issues: Open an issue
 
-🌟 Show Your Support
+## 🌟 Show Your Support
 If you find this project useful, please give it a ⭐️ on GitHub! Your support motivates us to keep improving.
 
-Happy shortening! 🎉
+## Happy shortening! 🎉
