@@ -1,8 +1,8 @@
-from flask import Flask, render_template, redirect, url_for, flash, request
+from flask import Flask, render_template, redirect, url_for, flash, request, session
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
-from flask import session
+from flask_migrate import Migrate
 import uuid
 import qrcode
 from io import BytesIO
@@ -10,18 +10,19 @@ import base64
 import requests
 import os
 
-
-
+# Create the Flask app
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Replace with a secure secret key
-
-TELEGRAM_API_URL = "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/sendMessage"
-TELEGRAM_CHAT_ID = "<YOUR_CHAT_ID>"  # Replace with your chat ID or group ID
 
 # Configure SQLite database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///link_shortener.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Initialize SQLAlchemy
 db = SQLAlchemy(app)
+
+# Initialize Flask-Migrate
+migrate = Migrate(app, db)
 
 # Initialize Flask-Login
 login_manager = LoginManager()
@@ -43,8 +44,9 @@ class ShortenedURL(db.Model):
     clicks = db.Column(db.Integer, default=0)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('shortened_urls', lazy=True))
+    qr_code_img = db.Column(db.Text)  # New column for QR code image data
 
-# Create database tables
+# Create database tables (only needed once)
 with app.app_context():
     db.create_all()
 
@@ -152,14 +154,6 @@ def shorten_url():
         if long_url:
             short_id = str(uuid.uuid4()).replace('-', '')[:5]
 
-            # Save the shortened URL to the database
-            if current_user.is_authenticated:
-                new_url = ShortenedURL(short_id=short_id, long_url=long_url, user_id=current_user.id)
-                db.session.add(new_url)
-                db.session.commit()
-
-            short_url = f"short.ly/{short_id}"
-
             # Generate QR code
             qr = qrcode.QRCode(
                 version=1,
@@ -167,7 +161,7 @@ def shorten_url():
                 box_size=10,
                 border=4,
             )
-            qr.add_data(short_url)
+            qr.add_data(f"short.ly/{short_id}")
             qr.make(fit=True)
 
             img = qr.make_image(fill='black', back_color='white')
@@ -176,6 +170,14 @@ def shorten_url():
             buffered = BytesIO()
             img.save(buffered, format="PNG")
             qr_code_img = base64.b64encode(buffered.getvalue()).decode('utf-8')
+
+            # Save the shortened URL to the database
+            if current_user.is_authenticated:
+                new_url = ShortenedURL(short_id=short_id, long_url=long_url, user_id=current_user.id, qr_code_img=qr_code_img)
+                db.session.add(new_url)
+                db.session.commit()
+
+            short_url = f"short.ly/{short_id}"
 
     return render_template('shorten.html', short_url=short_url, long_url=long_url, qr_code_img=qr_code_img, show_navbar=True)
 
@@ -191,7 +193,6 @@ def redirect_to_long_url(short_id):
     else:
         flash('Invalid short ID.', 'error')
         return redirect(url_for('home'), show_navbar=True)
-
 
 def send_telegram_notification(data):
     bot_token = 'YOUR_BOT_TOKEN'
@@ -212,7 +213,7 @@ def regular_form():
 
 @app.route('/teacher_form')
 def teacher_form():
-    return render_template('teacher_form.html',show_navbar=True)
+    return render_template('teacher_form.html', show_navbar=True)
 
 @app.route('/student_form')
 def student_form():
@@ -271,7 +272,6 @@ def submit_student():
     flash('Your Student Plan submission is now pending.', 'success')
     return redirect(url_for('student_form'), show_navbar=True)
 
-
 def send_telegram_message(message):
     payload = {
         'chat_id': TELEGRAM_CHAT_ID,
@@ -283,13 +283,11 @@ def send_telegram_message(message):
     except requests.exceptions.RequestException as e:
         print(f"Error sending Telegram message: {e}")
 
-
 UPLOAD_FOLDER = 'uploads'
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
 
 if __name__ == '__main__':
     app.run(debug=True)
