@@ -208,15 +208,15 @@ def send_telegram_notification(data):
 
 @app.route('/regular_form')
 def regular_form():
-    return render_template('regular_form.html')
+    return render_template('regular_form.html', show_navbar=True)
 
 @app.route('/teacher_form')
 def teacher_form():
-    return render_template('teacher_form.html')
+    return render_template('teacher_form.html',show_navbar=True)
 
 @app.route('/student_form')
 def student_form():
-    return render_template('student_form.html')
+    return render_template('student_form.html', show_navbar=True)
 
 @app.route('/submit_regular', methods=['POST'])
 def submit_regular():
@@ -232,7 +232,7 @@ def submit_regular():
     
     # Flash a success message
     flash('Your Regular Plan submission is now pending.', 'success')
-    return redirect(url_for('regular_form'))
+    return redirect(url_for('regular_form'), show_navbar=True)
 
 @app.route('/submit_teacher', methods=['POST'])
 def submit_teacher():
@@ -251,7 +251,7 @@ def submit_teacher():
     send_telegram_message(f"Teacher Plan Submission:\nName: {name}\nEmail: {email}\nPersonal Number: {personal_number}\nTelegram Number: {telegram_number}\nID Card: {id_card.filename}")
     
     flash('Your Teacher Plan submission is now pending.', 'success')
-    return redirect(url_for('teacher_form'))
+    return redirect(url_for('teacher_form'), show_navbar=True)
 
 @app.route('/submit_student', methods=['POST'])
 def submit_student():
@@ -269,7 +269,7 @@ def submit_student():
     send_telegram_message(f"Student Plan Submission:\nName: {name}\nEmail: {email}\nPersonal Number: {personal_number}\nTelegram Number: {telegram_number}\nID Card: {id_card.filename}")
     
     flash('Your Student Plan submission is now pending.', 'success')
-    return redirect(url_for('student_form'))
+    return redirect(url_for('student_form'), show_navbar=True)
 
 
 def send_telegram_message(message):

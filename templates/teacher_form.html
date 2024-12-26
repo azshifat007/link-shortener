@@ -10,8 +10,8 @@
     {% include "navbar.html" %}
     <div class="container mt-5">
         <div class="card p-4 shadow-lg">
-            <h2 class="text-center mb-4">Regular Plan</h2>
-            <form action="/submit_regular" method="POST">
+            <h2 class="text-center mb-4">Teacher Plan</h2>
+            <form action="/submit_teacher" method="POST">
                 <div class="mb-3">
                     <label for="name" class="form-label">Full Name</label>
                     <input type="text" id="name" name="name" class="form-control" required>
@@ -27,6 +27,10 @@
                 <div class="mb-3">
                     <label for="telegram_number" class="form-label">Telegram Number</label>
                     <input type="text" id="telegram_number" name="telegram_number" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="id_card" class="form-label">Upload ID Card</label>
+                    <input type="file" id="id_card" name="id_card" class="form-control" required>
                 </div>
                 <button type="submit" class="btn btn-primary w-100">Submit</button>
             </form>
