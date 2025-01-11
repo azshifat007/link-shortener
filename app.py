@@ -41,7 +41,7 @@ class ShortenedURL(db.Model):
     short_id = db.Column(db.String(10), unique=True, nullable=False)
     long_url = db.Column(db.String(500), nullable=False)
     clicks = db.Column(db.Integer, default=0)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Allow NULL for non-signed-up users
     user = db.relationship('User', backref=db.backref('shortened_urls', lazy=True))
     qr_code_img = db.Column(db.Text)
 
@@ -135,6 +135,16 @@ def shorten_url():
     if request.method == 'POST':
         long_url = request.form.get('long_url')
         if long_url:
+            # Initialize the session counter for non-signed-up users
+            if not current_user.is_authenticated:
+                if 'link_count' not in session:
+                    session['link_count'] = 0  # Initialize the counter if it doesn't exist
+
+                # Check if the user has reached the limit
+                if session['link_count'] >= 10:
+                    flash('You have reached the limit of 10 shortened links. Please sign up to create more.', 'warning')
+                    return redirect(url_for('shorten_url'))
+
             short_id = str(uuid.uuid4()).replace('-', '')[:5]
 
             qr = qrcode.QRCode(
@@ -152,10 +162,15 @@ def shorten_url():
             img.save(buffered, format="PNG")
             qr_code_img = base64.b64encode(buffered.getvalue()).decode('utf-8')
 
+            # Save the URL for both authenticated and non-authenticated users
             if current_user.is_authenticated:
                 new_url = ShortenedURL(short_id=short_id, long_url=long_url, user_id=current_user.id, qr_code_img=qr_code_img)
-                db.session.add(new_url)
-                db.session.commit()
+            else:
+                new_url = ShortenedURL(short_id=short_id, long_url=long_url, user_id=None, qr_code_img=qr_code_img)
+                session['link_count'] += 1  # Increment the counter for non-signed-up users
+
+            db.session.add(new_url)
+            db.session.commit()
 
             short_url = f"short.ly/{short_id}"
 

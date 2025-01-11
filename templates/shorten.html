@@ -5,6 +5,17 @@
     <h1 class="text-center mb-4">Shorten Your URL</h1>
     <div class="row justify-content-center">
         <div class="col-md-8">
+            <!-- Flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
             <form method="POST" class="p-4 border rounded shadow-sm bg-white">
                 <div class="mb-3">
                     <label for="long_url" class="form-label">Enter your URL:</label>
