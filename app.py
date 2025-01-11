@@ -41,7 +41,7 @@ class ShortenedURL(db.Model):
     short_id = db.Column(db.String(10), unique=True, nullable=False)
     long_url = db.Column(db.String(500), nullable=False)
     clicks = db.Column(db.Integer, default=0)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Allow NULL for non-signed-up users
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Allow NULL values
     user = db.relationship('User', backref=db.backref('shortened_urls', lazy=True))
     qr_code_img = db.Column(db.Text)
 
